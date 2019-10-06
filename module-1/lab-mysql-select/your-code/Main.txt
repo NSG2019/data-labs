@@ -1,84 +1,181 @@
-- Challenge1: --
+##### CHALLENGE 1: WHO HAS PUBLISHED WHAT AND WHEN #######
 
-CREATE SCHEMA if not exists lab_mysql default character set utf8;
-USE lab_mysql;
+# The information comes from three tables, author info from the authour table, the titles from the table titles and finally the publishers from table publishers.
 
--- Table 'lab-msql'.'cars'--
--- DROP TABLES 'CARS'
+# However, we need a join between authours and title_authours to reach the info from titles and publishers since they are n:m relations
 
-CREATE TABLE if not exists lab_mysql.cars 
-(Cars_id INT NOT NULL auto_increment,
-VIN VARCHAR(20) NULL DEFAULT NULL,
-Manufacturer   VARCHAR (45) NOT NULL, 
-Model  VARCHAR (45) NOT NULL, 
-Constr_Year INT NULL DEFAULT NULL, 
-Color VARCHAR (45) NULL DEFAULT NULL,
-PRIMARY KEY (Cars_id));
+select
 
--- Table 'lab-msql'.'Customers'--
+    a.au_id "AUTHOR ID",   a.au_lname "LAST NAME",   a.au_fname "FIRST NAME",   t.title "TITLE",   p.pub_name "PUBLISHER"
 
-CREATE TABLE if not exists lab_mysql.customers 
-(Customers_id INT NOT NULL auto_increment,
-Customer_num VARCHAR(20) NULL DEFAULT NULL, 
-Name  VARCHAR (45) NOT NULL, 
-Phone_n INT NULL DEFAULT NULL, 
-Email VARCHAR (45) NULL DEFAULT NULL,
-Address VARCHAR (45) NULL DEFAULT NULL,
-City VARCHAR (45) NULL DEFAULT NULL,
-State_Province VARCHAR (45) NULL DEFAULT NULL,
-Country VARCHAR (45) NULL DEFAULT NULL,
-zip_code INT NULL DEFAULT NULL,
-PRIMARY KEY (Customers_id));
+from publications.authors a
 
- -- Table 'lab-msql'.'Sales_person' 
+inner join publications.titleauthor ta on ta.au_id = a.au_id 
 
-CREATE TABLE if not exists lab_mysql.sales_person
-(Staff_id INT NOT NULL auto_increment,
-Staff_id_num VARCHAR(20) NULL DEFAULT NULL, 
-Name  VARCHAR (45) NOT NULL, 
-Store INT NULL DEFAULT NULL, 
-PRIMARY KEY (Staff_id));
+inner join publications.titles t on t.title_id = ta.title_id
 
--- Table 'lab-msql'.'Invoice' --
-CREATE TABLE if not exists lab_mysql.invoice
-(Invoice_id INT NOT NULL auto_increment,
-Invoice_num VARCHAR(20) NULL DEFAULT NULL, 
-Issue_date  DATE NOT NULL, 
-Car_id INT NOT NULL, 
-Customers_id INT NOT NULL,
-Staff_id INT NULL DEFAULT NULL,
-PRIMARY KEY (Invoice_id));
+inner join publications.publishers p on p.pub_id = t.pub_id;
 
--- Challenge 2: --
--- TABLE ¨lab-mysql¨, ¨cars¨--
 
-INSERT INTO cars (Cars_id, VIN, Manufacturer, Model, Constr_Year, Color) VALUES (0, 3K096I98581DHSNUP, Volkswagen, Tiguan, 2019, Blue);
-INSERT INTO cars (Cars_id, VIN, Manufacturer, Model, Constr_Year, Color) VALUES (1, ZM8G7BEUQZ97IH46V, Peugeot, Rifter, 2019, Red);
-INSERT INTO cars (Cars_id, VIN, Manufacturer, Model, Constr_Year, Color) VALUES (2, RKXVNNIHLVVZOUB4M, Ford, Fusion, 2018, White);
-INSERT INTO cars (Cars_id,VIN, Manufacturer, Model, Constr_Year, Color) VALUES (3,HKNDGS7CU31E9Z7JW, Toyota, RAV4, 2018, Silver);
-INSERT INTO cars (Cars_id, VIN, Manufacturer, Model, Constr_Year, Color) VALUES (4, DAM41UDN3CHU2WVF6, Volvo,	V60,	2019, Gray);
-INSERT INTO cars (Cars_id,VIN, Manufacturer, Model, Constr_Year, Color) VALUES (5,DAM41UDN3CHU2WVF6, Volvo,	V60, CrossCountry,	2019, Gray);
 
--- TABLE ¨lab_mysql¨, ¨customers¨--
+# Checking that the number of lines in the first query is the same as in the title_author table
 
-INSERT INTO "customers"('Customers_id', 'Customer_num', 'Name','Phone nº', 'Email','Address', 'City', 'State/Province','Country', "Postal-code")VALUES (0, 10001, 	"Pablo Picasso", "+34 636 17 63 82",	"Paseo de la Chopera, 14",	"Madrid," "Madrid",	"Spain",	,28045)
-INSERT INTO "customers"('Customers_id', 'Customer_num', 'Name','Phone nº', 'Email','Address', 'City', 'State/Province','Country', "Postal-code")VALUES (1,	20001,	"Abraham Lincoln", "+1 305 907 7086",	"120 SW 8th St", "Miami", 	"Florida", "United States",	33130)
-INSERT INTO "customers"('Customers_id', 'Customer_num', 'Name','Phone nº', 'Email','Address', 'City', 'State/Province','Country', "Postal-code")VALUES (2,	30001, 'Napoléon Bonaparte', "+33 1 79 75 40 00" ,	'40 Rue du Colisée', 'Paris', 'Île-de-France',	'France',	75008); 
 
--- TABLE ¨lab_mysql¨, ¨sales_person¨—
 
-INSERT INTO "sales_person"('Staff_id', 'Staff_id_num', 'Name', 'Store')VALUES ( 0, "00001", "Petey Cruiser", "Madrid")
-INSERT INTO "sales_person"('Staff_id', 'Staff_id_num', 'Name', 'Store')VALUES (1, "00002", "Anna Sthesia", "Barcelona")
-INSERT INTO "sales_person"('Staff_id', 'Staff_id_num', 'Name', 'Store')VALUES (2, "00003", "Paul Molive", "Berlin")
-INSERT INTO "sales_person"('Staff_id', 'Staff_id_num', 'Name', 'Store')VALUES (3, "00004", "Gail Forcewind", "Paris")
-INSERT INTO "sales_person"('Staff_id', 'Staff_id_num', 'Name', 'Store')VALUES (4, "00005","Paige Turner",	"Mimia")
-INSERT INTO "sales_person"('Staff_id', 'Staff_id_num', 'Name', 'Store')VALUES (5, "00006","Bob Frapples", "Mexico City")
-INSERT INTO "sales_person"('Staff_id', 'Staff_id_num', 'Name', 'Store')VALUES (6, "00007", "Walter Melon", "Amsterdam")
-INSERT INTO "sales_person"('Staff_id', 'Staff_id_num', 'Name', 'Store')VALUES (7, "00008", "Shonda Leer", "São Paulo");
+select count(*) from publications.titleauthor
 
--- TABLE ¨lab_mysql¨, ¨invoice¨--
 
-INSERT INTO invoice (Invoice_id,Invoice_num', 'Issue_date',  'Car_id', 'Customers_id','Staff_id')VALUES (0, 852399038, 22-08-2018, 0, 1, 3)
-INSERT INTO "invoice" (Invoice_id','Invoice_num', 'Issue_date',  'Car_id', 'Customers_id','Staff_id')VALUES (1, 731166526,	31-12-2018,	3, 0, 5)
-INSERT INTO "invoice" (Invoice_id','Invoice_num', 'Issue_date',  'Car_id', 'Customers_id','Staff_id')VALUES  (2, 271135104, 22-01-2019, 2, 2, 7);
 
+###### CHALLENGE 2: WHO HAVE PUBLISHED HOW MANY AT WHERE #######
+
+# In addition to challenge 1 table, an aggregation function needs to be used, this time the count of titles to understand how many books has each author written.
+
+select
+
+    a.au_id "AUTHOR ID",   a.au_lname "LAST NAME",   a.au_fname "FIRST NAME",   p.pub_name "PUBLISHER",   count(t.title_id) "TITLE COUNT"
+from publications.authors a
+
+inner join publications.titleauthor ta on ta.au_id = a.au_id
+
+inner join publications.titles t on t.title_id = ta.title_id
+
+inner join publications.publishers p on p.pub_id = t.pub_id
+
+group by a.au_id,a.au_lname,a.au_fname,p.pub_name
+
+order by count(t.title_id) DESC;
+
+
+
+# To check if your output is correct, sum up the TITLE COUNT column. The sum number should be the same as the total number of records in Table titleauthor.
+
+# I use the above table as an auxiliar table and sum all the lines from title count -- the result is 25 which is the same as the lines in title_authors table.
+
+
+
+select sum(title_count)
+
+from (select
+
+ a.au_id "AUTHOR ID",   a.au_lname "LAST NAME",   a.au_fname "FIRST NAME",   p.pub_name "PUBLISHER",   count(t.title_id) title_count
+
+from publications.authors a
+
+inner join publications.titleauthor ta on ta.au_id = a.au_id
+
+inner join publications.titles t on t.title_id = ta.title_id
+
+inner join publications.publishers p on p.pub_id = t.pub_id
+
+group by a.au_id,a.au_lname,a.au_fname,p.pub_name
+
+order by count(t.title_id) DESC) auxiliar;
+
+
+
+###### CHALLENGE 3: BEST SELLING AUTHORS #######
+
+################################################
+
+
+
+# This time we need to add they table sales which contains the units sold from eeach title
+
+# A limit is included since the only info needed is from the best three authours
+
+
+
+select
+
+    a.au_id AUTHOR_ID,   a.au_lname LAST_NAME,   a.au_fname FIRST_NAME,   sum(s.qty) TOTAL
+
+from publications.authors a
+
+inner join publications.titleauthor ta on ta.au_id = a.au_id
+
+inner join publications.titles t on t.title_id = ta.title_id
+
+inner join publications.sales s on s.title_id = ta.title_id
+
+group by AUTHOR_ID,LAST_NAME,FIRST_NAME
+
+order by TOTAL DESC
+
+limit 3
+
+
+
+
+
+
+
+###### CHALLENGE 4: BEST SELLING AUTHORS RANKING #######
+
+########################################################
+
+
+
+
+# Now, we are ask to display all of the authors even those who havent sold anny unit.
+
+# In order to do that the join with the sales table needs to be left, 
+
+# because if the author hasnt sold any unit if they are not in the sales table, the query of challenge 3 would discard these cases
+
+# Also, coalesce function is used because we want to display a 0 instead of a null.
+
+
+
+
+select
+
+    a.au_id AUTHOR_ID,   a.au_lname LAST_NAME,   a.au_fname FIRST_NAME,   coalesce(sum(s.qty),0) TOTAL
+
+from publications.authors a
+
+left join publications.titleauthor ta on ta.au_id = a.au_id
+
+left join publications.titles t on t.title_id = ta.title_id
+
+left join publications.sales s on s.title_id = ta.title_id
+
+group by AUTHOR_ID,LAST_NAME,FIRST_NAME
+
+order by TOTAL DESC;
+
+
+
+
+
+
+
+###### BONUS: MOST PROFITING AUTHORS #######
+
+############################################
+
+
+
+
+# Now, the profits of each book in terms of advance and royaly is included in the table titles -- no need to use sales table
+
+
+# A combination of two sums is needed
+
+
+
+
+select
+
+    a.au_id AUTHOR_ID,   a.au_lname LAST_NAME,   a.au_fname FIRST_NAME,   (sum(t.royalty)+sum(t.advance)) PROFIT
+
+from publications.authors a
+
+INNER join publications.titleauthor ta on ta.au_id = a.au_id
+
+INNER join publications.titles t on t.title_id = ta.title_id
+
+group by AUTHOR_ID,LAST_NAME,FIRST_NAME
+
+order by PROFIT DESC
+
+limit 3;
