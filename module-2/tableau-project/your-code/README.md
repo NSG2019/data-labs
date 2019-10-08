@@ -1,4 +1,4 @@
-# Analyzing NY Green taxis.
+# Analyzing NYC Green taxis.
 
 ## Description:
 
